@@ -26,7 +26,7 @@ function App() {
       {loading ? (
         <p>Loading users...</p>
       ) : (
-        <TaskList/>
+        <TaskList tasks={tasks}/>
       )}
     </>
   )

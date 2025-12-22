@@ -1,5 +1,13 @@
+import TaskItem from "./TaskItem"
+
 function TaskList({ tasks }) {
-  return <p>This is a task list</p>
+  return (
+    <ul>
+      {tasks.map(task => (
+        <TaskItem task={task}/>
+      ))}
+    </ul>
+  )
 }
 
 export default TaskList
