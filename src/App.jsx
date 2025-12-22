@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import TaskList from './TaskList'
 
 function App() {
   const [tasks, setTasks] = useState([])
@@ -25,10 +26,7 @@ function App() {
       {loading ? (
         <p>Loading users...</p>
       ) : (
-        <ul>
-          <li>Placeholder list</li>
-          <li>There are {tasks.length} tasks to do</li>
-        </ul>
+        <TaskList/>
       )}
     </>
   )
