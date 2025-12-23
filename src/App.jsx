@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import TaskList from './TaskList'
 
 function App() {
   const [tasks, setTasks] = useState([])
-  const [selectedTask, setSelectedTask] = useState(null)
+  const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -26,7 +24,11 @@ function App() {
       {loading ? (
         <p>Loading users...</p>
       ) : (
-        <TaskList tasks={tasks}/>
+        <TaskList
+          tasks={tasks}
+          selectedTaskId={selectedTaskId}
+          onSelectTask={setSelectedTaskId}
+        />
       )}
     </>
   )

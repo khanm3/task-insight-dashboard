@@ -1,6 +1,11 @@
-function TaskItem({ task }) {
+function TaskItem({ task, isSelected, onSelect }) {
   return (
-    <li>{task.title}</li>
+    <li
+      onClick={() => onSelect(task.id)}
+      style={{ fontWeight: isSelected ? "bold" : "normal" }}
+    >
+      {task.title}
+    </li>
   )
 }
 
