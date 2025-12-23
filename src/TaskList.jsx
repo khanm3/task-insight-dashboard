@@ -5,6 +5,7 @@ function TaskList({ tasks, selectedTaskId, onSelectTask }) {
     <ul>
       {tasks.map(task => (
         <TaskItem
+          key={task.id}
           task={task}
           isSelected={selectedTaskId === task.id}
           onSelect={onSelectTask}
