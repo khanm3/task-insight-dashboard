@@ -64,5 +64,27 @@ describe('<App />', () => {
         expect(screen.queryByText('Test Task C')).not.toBeInTheDocument()
       })
     })
+
+  })
+
+  describe('persistence', () => {
+    beforeEach(() => {
+      localStorage.clear()
+    })
+
+    test('complete task selection persists after reload', async () => {
+      const { unmount } = render(<App />)
+
+      const user = userEvent.setup()
+      const completedButton = await screen.findByRole('button', { name: /completed/i })
+      await user.click(completedButton)
+
+      // Simulate closing the app.
+      unmount()
+
+      render(<App />)
+      const reloadedCompletedButton = await screen.findByRole('button', { name: /completed/i })
+      expect(reloadedCompletedButton).toHaveAttribute('aria-pressed', 'true')
+    })
   })
 })
