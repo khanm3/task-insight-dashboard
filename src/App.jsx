@@ -7,7 +7,13 @@ function App() {
   const [tasks, setTasks] = useState([])
   const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState("all")
+  const [filter, setFilter] = useState(() => {
+    const persistedFilter = localStorage.getItem("filter")
+    if (persistedFilter) {
+      return persistedFilter;
+    }
+    return "all"
+  })
 
   useEffect(() => {
     async function fetchTasks() {
@@ -19,6 +25,17 @@ function App() {
 
     fetchTasks()
   }, [])
+
+  useEffect(() => {
+    const persistedFilter = localStorage.getItem("filter")
+    if (persistedFilter) {
+      setFilter(persistedFilter)
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("filter", filter)
+  }, [filter])
 
   const filteredTasks = tasks.filter(task => {
     if (filter === "completed") return task.completed
