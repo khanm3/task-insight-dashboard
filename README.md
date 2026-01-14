@@ -7,7 +7,7 @@ I wanted to practice building React applications that fetch data from an API and
 ## Features
 - Fetches a list of tasks from a public example API for developers.
 - Select tasks to mark them as “active” (bolded text).
-- Persist task selection across page reloads using localStorage.
+- Persist the selected task filter (all / completed / incomplete) across page reloads using localStorage.
 - Simple interface built with React functional components and hooks.
 
 ## Tech Stack
@@ -37,12 +37,13 @@ Check out the live demo: [Task Insight Dashboard Live](https://task-insight-dash
 
 ## Running Tests
 - Run all tests: `npm test`
-- Includes tests for persisting task selection after page reload, written using Vitest and React Testing Library.
+- Includes tests for persisting the selected task filter after page reload, written using Vitest and React Testing Library.
 - One feature was developed using Test-Driven Development (TDD) principles.
 
 ## Usage
 - Click on a task to select it (text will be bolded).
-- Reload the page — your selected tasks will persist.
+- Change the task filter (e.g., all / completed / incomplete).
+- Reload the page — your selected filter will persist.
 
 ## Key Learnings
 - Strengthened understanding of React Hooks and state management.
