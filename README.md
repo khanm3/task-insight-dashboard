@@ -22,6 +22,7 @@ I wanted to practice building React applications that fetch data from an API and
 - `src/components/` – contains all the main UI components (TaskFilter, TaskItem, TaskList)
 - `src/tests/` – global test setup (`setup.js`)
 - `App.jsx` – root component
+- `App.test.jsx` – main test suite for the App component
 - `main.jsx` – application entry point
 
 ## Demo
