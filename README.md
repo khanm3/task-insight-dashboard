@@ -18,6 +18,12 @@ I wanted to practice building React applications that fetch data from an API and
 - Fetch API for retrieving tasks
 - Vitest & React Testing Library for testing
 
+## Project Structure
+- `src/components/` – contains all the main UI components (TaskFilter, TaskItem, TaskList)
+- `src/tests/` – global test setup (`setup.js`)
+- `App.jsx` – root component
+- `main.jsx` – application entry point
+
 ## Demo
 Check out the live demo: [Task Insight Dashboard Live](https://task-insight-dashboard.netlify.app/)
 
