@@ -1,13 +1,16 @@
-import TaskItem from "./TaskItem"
+import TaskCard from "./TaskCard"
 
 function TaskList({ tasks, selectedTaskId, onSelectTask }) {
   return (
-    <ul>
+    <ul
+      className="flex flex-col gap-4"
+    >
       {tasks.map(task => (
-        <TaskItem
+        <TaskCard
           key={task.id}
           task={task}
-          isSelected={selectedTaskId === task.id}
+          //isSelected={selectedTaskId === task.id}
+          isSelected={task.id === 2} // TODO: change back to prevl ine
           onSelect={onSelectTask}
         />
       ))}

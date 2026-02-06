@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import './App.css'
 import TaskList from './components/TaskList'
 import TaskFilter from './components/TaskFilter'
 
@@ -43,25 +42,24 @@ function App() {
     return true
   })
 
+  const dummyTasks = [
+    { id: 1, title: "Write README", completed: true },
+    { id: 2, title: "Refactor layout", completed: false },
+    { id: 3, title: "Polish filters", completed: true },
+  ]
+
   return (
-    <>
-      <h1>Task Insight Dashboard</h1>
-      {loading ? (
-        <p>Loading users...</p>
-      ) : (
-        <div>
-          <TaskFilter
-            filter={filter}
-            onChange={setFilter}
-          />
-          <TaskList
-            tasks={filteredTasks}
-            selectedTaskId={selectedTaskId}
-            onSelectTask={setSelectedTaskId}
-          />
-        </div>
-      )}
-    </>
+    <div className="mx-auto max-w-2xl px-4 py-6">
+      <div className="flex flex-col gap-6">
+        <h1 className="text-3xl font-bold text-purple-600">
+          Task Insight Dashboard
+        </h1>
+
+        <TaskFilter />
+
+        <TaskList tasks={dummyTasks} />
+      </div>
+    </div>
   )
 }
 
