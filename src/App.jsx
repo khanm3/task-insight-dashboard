@@ -42,22 +42,23 @@ function App() {
     return true
   })
 
-  const dummyTasks = [
-    { id: 1, title: "Write README", completed: true },
-    { id: 2, title: "Refactor layout", completed: false },
-    { id: 3, title: "Polish filters", completed: true },
-  ]
-
   return (
-    <div className="mx-auto max-w-2xl px-4 py-6">
+    <div className="mx-auto max-w-2xl md:max-w-3xl lg:max-w-4xl px-4 py-6">
       <div className="flex flex-col gap-6">
-        <h1 className="text-3xl font-bold text-purple-600">
+        <h1 className="text-xl font-medium text-gray-900">
           Task Insight Dashboard
         </h1>
 
-        <TaskFilter />
+        <TaskFilter
+          filter={filter}
+          onChange={setFilter}
+        />
 
-        <TaskList tasks={dummyTasks} />
+        <TaskList
+          tasks={filteredTasks}
+          selectedTaskId={selectedTaskId}
+          onSelectTask={setSelectedTaskId}
+        />
       </div>
     </div>
   )

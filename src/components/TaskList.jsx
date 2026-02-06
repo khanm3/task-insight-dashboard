@@ -9,8 +9,7 @@ function TaskList({ tasks, selectedTaskId, onSelectTask }) {
         <TaskCard
           key={task.id}
           task={task}
-          //isSelected={selectedTaskId === task.id}
-          isSelected={task.id === 2} // TODO: change back to prevl ine
+          isSelected={selectedTaskId === task.id}
           onSelect={onSelectTask}
         />
       ))}

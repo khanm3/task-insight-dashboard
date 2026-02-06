@@ -51,7 +51,7 @@ describe('<App />', () => {
     test('shows only incomplete tasks when the incomplete filter is selected', async () => {
       render(<App />)
 
-      const button = await screen.findByRole('button', { name: /incomplete/i }) // Let component load
+      const button = await screen.findByRole('radio', { name: /incomplete/i }) // Let component load
       
       const user = userEvent.setup()
       await user.click(button)
@@ -76,14 +76,14 @@ describe('<App />', () => {
       const { unmount } = render(<App />)
 
       const user = userEvent.setup()
-      const completedButton = await screen.findByRole('button', { name: /completed/i })
+      const completedButton = await screen.findByRole('radio', { name: /completed/i })
       await user.click(completedButton)
 
       // Simulate closing the app.
       unmount()
 
       render(<App />)
-      const reloadedCompletedButton = await screen.findByRole('button', { name: /completed/i })
+      const reloadedCompletedButton = await screen.findByRole('radio', { name: /completed/i })
       expect(reloadedCompletedButton).toHaveAttribute('aria-pressed', 'true')
     })
   })

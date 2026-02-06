@@ -16,6 +16,7 @@ function TaskCard({ task, isSelected, onSelect }) {
             : "border-gray-200 hover:bg-gray-50 hover:shadow-md"
         }
       `}
+      onClick={() => onSelect(task.id)}
     >
       <h3 className="text-lg font-medium text-gray-900">
         {task.title}

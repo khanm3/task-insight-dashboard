@@ -4,16 +4,19 @@ function TaskFilter({ filter, onChange }) {
   return (
     <div className="flex items-center gap-2">
       <FilterPill
-        active={true}
+        active={filter === "all"}
         label="All"
+        onClick={() => onChange("all")}
       />
       <FilterPill
-        active={false}
+        active={filter === "completed"}
         label="Completed"
+        onClick={() => onChange("completed")}
       />
       <FilterPill
-        active={false}
+        active={filter === "incomplete"}
         label="Incomplete"
+        onClick={() => onChange("incomplete")}
       />
     </div>
   )
