@@ -49,16 +49,24 @@ function App() {
           Task Insight Dashboard
         </h1>
 
-        <TaskFilter
-          filter={filter}
-          onChange={setFilter}
-        />
+        {loading ? (
+          <div className="text-center py-12 text-gray-500 text-sm">
+            Loading tasks...
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6">
+            <TaskFilter
+              filter={filter}
+              onChange={setFilter}
+            />
+            <TaskList
+              tasks={filteredTasks}
+              selectedTaskId={selectedTaskId}
+              onSelectTask={setSelectedTaskId}
+            />
+          </div>
+        )}
 
-        <TaskList
-          tasks={filteredTasks}
-          selectedTaskId={selectedTaskId}
-          onSelectTask={setSelectedTaskId}
-        />
       </div>
     </div>
   )
