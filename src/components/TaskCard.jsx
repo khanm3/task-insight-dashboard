@@ -3,6 +3,8 @@ import StatusBadge from "./StatusBadge"
 function TaskCard({ task, isSelected, onSelect }) {
   return (
     <li
+      role="option"
+      aria-selected={isSelected}
       className={`
         flex flex-col
         px-4 py-4

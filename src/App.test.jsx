@@ -44,6 +44,10 @@ describe('<App />', () => {
       })
     })
 
+    beforeEach(() => {
+      localStorage.clear()
+    })
+
     afterEach(() => {
       vi.restoreAllMocks()
     })
@@ -65,6 +69,23 @@ describe('<App />', () => {
       })
     })
 
+    test('clears selected task when filter changes', async () => {
+      const user = userEvent.setup()
+
+      render(<App />)
+
+      // Select a task.
+      const firstTask = await screen.findByRole('option', { name: /test task a/i })
+      await user.click(firstTask)
+      expect(firstTask).toHaveAttribute('aria-selected', 'true')
+
+      // Change filter.
+      const incompleteFilter = screen.getByRole('radio', { name: /incomplete/i })
+      await user.click(incompleteFilter)
+
+      // Assert selection is cleared.
+      expect(screen.queryByRole('option', { selected: true })).not.toBeInTheDocument()
+    })
   })
 
   describe('persistence', () => {
