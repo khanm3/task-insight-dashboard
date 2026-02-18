@@ -40,6 +40,7 @@ function App() {
     setSelectedTaskId(null)
   }, [filter])
 
+  // Derived values
   const filteredTasks = tasks.filter(task => {
     if (filter === "completed") return task.completed
     if (filter === "incomplete") return !task.completed
@@ -47,6 +48,17 @@ function App() {
   })
 
   const numCompleted = tasks.filter(task => task.completed).length
+
+  // Event handlers
+  const toggleTask = (taskId) => {
+    setTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.id === taskId
+          ? { ...task, completed: !task.completed }
+          : task
+      )
+    )
+  }
 
   return (
     <div className="mx-auto max-w-2xl md:max-w-3xl lg:max-w-4xl px-4 py-6">
@@ -72,6 +84,7 @@ function App() {
               tasks={filteredTasks}
               selectedTaskId={selectedTaskId}
               onSelectTask={setSelectedTaskId}
+              onToggle={toggleTask}
             />
           </div>
         )}

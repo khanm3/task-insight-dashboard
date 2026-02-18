@@ -1,6 +1,6 @@
 import TaskCard from "./TaskCard"
 
-function TaskList({ tasks, selectedTaskId, onSelectTask }) {
+function TaskList({ tasks, selectedTaskId, onSelectTask, onToggle }) {
   return (
     <ul
       role="listbox"
@@ -12,6 +12,7 @@ function TaskList({ tasks, selectedTaskId, onSelectTask }) {
           task={task}
           isSelected={selectedTaskId === task.id}
           onSelect={onSelectTask}
+          onToggle={onToggle}
         />
       ))}
     </ul>

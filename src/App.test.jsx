@@ -162,20 +162,20 @@ describe('<App />', () => {
     test('clicking a checkbox toggles completion status', async () => {
       render(<App />)
       const taskA = await screen.findByRole("option", { name: /Test Task A/i })
+      const checkbox = within(taskA).getByRole("checkbox")
 
       // Precondition: Task A status is incomplete
-      expect(within(taskA).getByText(/incomplete/i)).toBeInTheDocument()
+      expect(checkbox).not.toBeChecked()
 
       // Toggle checkbox
-      const checkbox = within(taskA).getByRole("checkbox")
       await user.click(checkbox)
 
       // Postcondition: Task A status is complete
-      expect(within(taskA).getByText(/completed/i)).toBeInTheDocument()
+      expect(checkbox).toBeChecked()
 
       // Optional: Verify toggle back works
       await user.click(checkbox)
-      expect(within(taskA).getByText(/incomplete/i)).toBeInTheDocument()
+      expect(checkbox).not.toBeChecked()
     })
   })
 })
