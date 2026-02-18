@@ -1,8 +1,20 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from './App'
 
 describe('<App />', () => {
+  let user
+
+  beforeEach(() => {
+    user = userEvent.setup()
+  })
+
+  const setFilter = async (filterName) => {
+    const regex = new RegExp(filterName, "i")
+    const filterButton = await screen.findByRole("radio", { name: regex })
+    await user.click(filterButton)
+  }
+
   test('renders task dashboard', () => {
     render(<App />)
     expect(screen.getByText(/task insight dashboard/i)).toBeInTheDocument()
@@ -55,10 +67,7 @@ describe('<App />', () => {
     test('shows only incomplete tasks when the incomplete filter is selected', async () => {
       render(<App />)
 
-      const button = await screen.findByRole('radio', { name: /incomplete/i }) // Let component load
-      
-      const user = userEvent.setup()
-      await user.click(button)
+      await setFilter("incomplete")
 
       await waitFor(() => {
         expect(screen.getByText('Test Task A')).toBeInTheDocument()
@@ -70,8 +79,6 @@ describe('<App />', () => {
     })
 
     test('clears selected task when filter changes', async () => {
-      const user = userEvent.setup()
-
       render(<App />)
 
       // Select a task.
@@ -80,8 +87,7 @@ describe('<App />', () => {
       expect(firstTask).toHaveAttribute('aria-selected', 'true')
 
       // Change filter.
-      const incompleteFilter = screen.getByRole('radio', { name: /incomplete/i })
-      await user.click(incompleteFilter)
+      await setFilter("incomplete")
 
       // Assert selection is cleared.
       expect(screen.queryByRole('option', { selected: true })).not.toBeInTheDocument()
@@ -96,9 +102,7 @@ describe('<App />', () => {
     test('complete task selection persists after reload', async () => {
       const { unmount } = render(<App />)
 
-      const user = userEvent.setup()
-      const completedButton = await screen.findByRole('radio', { name: /completed/i })
-      await user.click(completedButton)
+      await setFilter('completed')
 
       // Simulate closing the app.
       unmount()
@@ -106,6 +110,72 @@ describe('<App />', () => {
       render(<App />)
       const reloadedCompletedButton = await screen.findByRole('radio', { name: /completed/i })
       expect(reloadedCompletedButton).toHaveAttribute('aria-pressed', 'true')
+    })
+  })
+
+  describe('toggle completion behavior', () => {
+    beforeEach(() => {
+      localStorage.clear()
+    })
+
+    beforeEach(() => {
+      vi.spyOn(global, 'fetch').mockResolvedValue({
+        json: async () => [
+          { id: 1, title: 'Test Task A', completed: false },
+          { id: 2, title: 'Test Task B', completed: true },
+        ]
+      })
+    })
+
+    test('toggling a task while filtered by Incomplete removes it from view', async () => {
+      render(<App />)
+      await setFilter("incomplete")
+
+      // Precondition: Task A in view
+      const taskA = await screen.findByRole("option", { name: /Test Task A/i })
+      expect(taskA).toBeInTheDocument()
+
+      // Toggle checkbox
+      const checkbox = within(taskA).getByRole("checkbox")
+      await user.click(checkbox)
+
+      // Postcondition: Task A not in view
+      expect(screen.queryByRole("option", { name: /Test Task A/i })).not.toBeInTheDocument()
+    })
+
+    test('toggling a task while filtered by Completed removes it from view', async () => {
+      render(<App />)
+      await setFilter("completed")
+
+      // Precondition: Task B in view
+      const taskB = await screen.findByRole("option", { name: /Test Task B/i })
+      expect(taskB).toBeInTheDocument()
+
+      // Toggle checkbox
+      const checkbox = within(taskB).getByRole("checkbox")
+      await user.click(checkbox)
+
+      // Postcondition: Task B not in view
+      expect(screen.queryByRole("option", { name: /Test Task A/i })).not.toBeInTheDocument()
+    })
+
+    test('clicking a checkbox toggles completion status', async () => {
+      render(<App />)
+      const taskA = await screen.findByRole("option", { name: /Test Task A/i })
+
+      // Precondition: Task A status is incomplete
+      expect(within(taskA).getByText(/incomplete/i)).toBeInTheDocument()
+
+      // Toggle checkbox
+      const checkbox = within(taskA).getByRole("checkbox")
+      await user.click(checkbox)
+
+      // Postcondition: Task A status is complete
+      expect(within(taskA).getByText(/completed/i)).toBeInTheDocument()
+
+      // Optional: Verify toggle back works
+      await user.click(checkbox)
+      expect(within(taskA).getByText(/incomplete/i)).toBeInTheDocument()
     })
   })
 })
