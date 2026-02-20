@@ -4,7 +4,6 @@ import TaskFilter from './components/TaskFilter'
 
 function App() {
   const [tasks, setTasks] = useState([])
-  const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState(() => {
     const persistedFilter = localStorage.getItem("filter")
@@ -34,10 +33,6 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem("filter", filter)
-  }, [filter])
-
-  useEffect(() => {
-    setSelectedTaskId(null)
   }, [filter])
 
   // Derived values
@@ -82,8 +77,6 @@ function App() {
             />
             <TaskList
               tasks={filteredTasks}
-              selectedTaskId={selectedTaskId}
-              onSelectTask={setSelectedTaskId}
               onToggle={toggleTask}
             />
           </div>

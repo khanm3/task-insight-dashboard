@@ -1,24 +1,16 @@
 import StatusBadge from "./StatusBadge"
 
-function TaskCard({ task, isSelected, onSelect, onToggle }) {
+function TaskCard({ task, onToggle }) {
   return (
     <li
       role="option"
-      aria-selected={isSelected}
       className={`
         flex flex-col
         px-4 py-4
         border rounded-lg
         transition-colors transition-shadow duration-200
-        cursor-pointer
-
-        ${
-          isSelected
-            ? "border-blue-500 bg-blue-50"
-            : "border-gray-200 hover:bg-gray-50 hover:shadow-md"
-        }
+        "border-gray-200 hover:bg-gray-50 hover:shadow-md"
       `}
-      onClick={() => onSelect(task.id)}
     >
 
       <div className="flex items-start gap-3">

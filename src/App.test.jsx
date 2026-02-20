@@ -77,21 +77,6 @@ describe('<App />', () => {
         expect(screen.queryByText('Test Task C')).not.toBeInTheDocument()
       })
     })
-
-    test('clears selected task when filter changes', async () => {
-      render(<App />)
-
-      // Select a task.
-      const firstTask = await screen.findByRole('option', { name: /test task a/i })
-      await user.click(firstTask)
-      expect(firstTask).toHaveAttribute('aria-selected', 'true')
-
-      // Change filter.
-      await setFilter("incomplete")
-
-      // Assert selection is cleared.
-      expect(screen.queryByRole('option', { selected: true })).not.toBeInTheDocument()
-    })
   })
 
   describe('persistence', () => {
@@ -99,7 +84,7 @@ describe('<App />', () => {
       localStorage.clear()
     })
 
-    test('complete task selection persists after reload', async () => {
+    test('completed filter persists after reload', async () => {
       const { unmount } = render(<App />)
 
       await setFilter('completed')
