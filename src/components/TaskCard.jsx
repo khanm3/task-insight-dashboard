@@ -1,9 +1,9 @@
-import StatusBadge from "./StatusBadge"
-
 function TaskCard({ task, onToggle }) {
+  const titleId = `task-title-${task.id}`
+
   return (
     <li
-      role="option"
+      aria-labelledby={titleId}
       className={`
         flex flex-col
         px-4 py-4
@@ -23,11 +23,14 @@ function TaskCard({ task, onToggle }) {
           className="accent-blue-600 h-5 w-5 mt-1 cursor-pointer border-gray-300 focus:ring-blue-500"
         />
 
-        <h3 className={`text-lg font-medium transition-colors ${
-          task.completed
-            ? "line-through text-gray-400"
-            : "text-gray-900"
-        }`}>
+        <h3
+          id={titleId}
+          className={`text-lg font-medium transition-colors ${
+            task.completed
+              ? "line-through text-gray-400"
+              : "text-gray-900"
+          }`}
+        >
           {task.title}
         </h3>
       </div>

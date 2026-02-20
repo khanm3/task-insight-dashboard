@@ -84,6 +84,14 @@ describe('<App />', () => {
       localStorage.clear()
     })
 
+    beforeEach(() => {
+      vi.spyOn(global, 'fetch').mockResolvedValue({
+        json: async () => [
+          { id: 1, title: 'Buy milk', completed: false }
+        ]
+      })
+    })
+
     test('completed filter persists after reload', async () => {
       const { unmount } = render(<App />)
 
@@ -117,7 +125,7 @@ describe('<App />', () => {
       await setFilter("incomplete")
 
       // Precondition: Task A in view
-      const taskA = await screen.findByRole("option", { name: /Test Task A/i })
+      const taskA = await screen.findByRole('listitem', { name: /Test Task A/i })
       expect(taskA).toBeInTheDocument()
 
       // Toggle checkbox
@@ -125,7 +133,7 @@ describe('<App />', () => {
       await user.click(checkbox)
 
       // Postcondition: Task A not in view
-      expect(screen.queryByRole("option", { name: /Test Task A/i })).not.toBeInTheDocument()
+      expect(screen.queryByRole('listitem', { name: /Test Task A/i })).not.toBeInTheDocument()
     })
 
     test('toggling a task while filtered by Completed removes it from view', async () => {
@@ -133,7 +141,7 @@ describe('<App />', () => {
       await setFilter("completed")
 
       // Precondition: Task B in view
-      const taskB = await screen.findByRole("option", { name: /Test Task B/i })
+      const taskB = await screen.findByRole("listitem", { name: /Test Task B/i })
       expect(taskB).toBeInTheDocument()
 
       // Toggle checkbox
@@ -141,12 +149,12 @@ describe('<App />', () => {
       await user.click(checkbox)
 
       // Postcondition: Task B not in view
-      expect(screen.queryByRole("option", { name: /Test Task A/i })).not.toBeInTheDocument()
+      expect(screen.queryByRole("listitem", { name: /Test Task A/i })).not.toBeInTheDocument()
     })
 
     test('clicking a checkbox toggles completion status', async () => {
       render(<App />)
-      const taskA = await screen.findByRole("option", { name: /Test Task A/i })
+      const taskA = await screen.findByRole("listitem", { name: /Test Task A/i })
       const checkbox = within(taskA).getByRole("checkbox")
 
       // Precondition: Task A status is incomplete
