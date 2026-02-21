@@ -1,4 +1,4 @@
-function TaskCard({ task, onToggle }) {
+function TaskCard({ task, onToggle, isEditing, onStartEditing }) {
   const titleId = `task-title-${task.id}`
 
   return (
@@ -23,16 +23,27 @@ function TaskCard({ task, onToggle }) {
           className="accent-blue-600 h-5 w-5 mt-1 cursor-pointer border-gray-300 focus:ring-blue-500"
         />
 
-        <h3
-          id={titleId}
-          className={`text-lg font-medium transition-colors ${
-            task.completed
-              ? "line-through text-gray-400"
-              : "text-gray-900"
-          }`}
-        >
-          {task.title}
-        </h3>
+        {isEditing ? (
+          <input
+            type="text"
+            defaultValue={task.title}
+            aria-label="Edit task title"
+            className="flex-1 border-b focus:outline-none"
+            autoFocus
+          />
+        ) : (
+          <h3
+            id={titleId}
+            className={`text-lg font-medium transition-colors ${
+              task.completed
+                ? "line-through text-gray-400"
+                : "text-gray-900"
+            }`}
+            onClick={onStartEditing}
+          >
+            {task.title}
+          </h3>
+        )}
       </div>
     </li>
   )

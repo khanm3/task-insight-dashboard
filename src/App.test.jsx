@@ -171,4 +171,37 @@ describe('<App />', () => {
       expect(checkbox).not.toBeChecked()
     })
   })
+
+  describe('task title edit behavior', () => {
+    beforeEach(() => {
+      localStorage.clear()
+    })
+
+    beforeEach(() => {
+      vi.spyOn(global, 'fetch').mockResolvedValue({
+        json: async () => [
+          { id: 1, title: 'Buy milk', completed: false },
+          { id: 2, title: 'Do laundry', completed: false }
+        ]
+      })
+    })
+
+    test('clicking a task title enters edit mode', async () => {
+      render(<App />)
+
+      // Precondition: title exists
+      const taskItem = await screen.findByRole('listitem', { name: /Buy milk/i })
+      const title = within(taskItem).getByRole('heading', { name: /Buy milk/i })
+      expect(title).toBeInTheDocument()
+      expect(within(taskItem).queryByRole('textbox')).not.toBeInTheDocument()
+
+      // Action: click the task title
+      await user.click(title)
+
+      // Postcondition: input appears and is focused
+      const input = within(taskItem).getByRole('textbox')
+      expect(input).toBeInTheDocument()
+      expect(input).toHaveFocus()
+    })
+  })
 })

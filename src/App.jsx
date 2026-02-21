@@ -12,6 +12,7 @@ function App() {
     }
     return "all"
   })
+  const [editingTaskId, setEditingTaskId] = useState(null)
 
   useEffect(() => {
     async function fetchTasks() {
@@ -78,6 +79,8 @@ function App() {
             <TaskList
               tasks={filteredTasks}
               onToggle={toggleTask}
+              editingTaskId={editingTaskId}
+              setEditingTaskId={setEditingTaskId}
             />
           </div>
         )}
