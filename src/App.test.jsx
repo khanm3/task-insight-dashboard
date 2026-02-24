@@ -204,4 +204,29 @@ describe('<App />', () => {
       expect(input).toHaveFocus()
     })
   })
+
+  test('pressing Enter updates the task title', async () => {
+    render(<App />)
+
+    // Precondition: task exists
+    const taskItem = await screen.findByRole('listitem', { name: /buy milk/i })
+    const title = within(taskItem).getByRole('heading', { name: /buy milk/i })
+
+    // Enter edit mode
+    await user.click(title)
+
+    const input = within(taskItem).getByRole('textbox')
+    expect(input).toHaveFocus()
+
+    // Action: change value and press Enter
+    await user.clear(input)
+    await user.type(input, "Buy oat milk{enter}")
+
+    // Postcondition:
+    // 1. Input disappears
+    expect(within(taskItem).queryByRole('textbox')).not.toBeInTheDocument()
+
+    // 2. Heading now shows updated title
+    expect(within(taskItem).getByRole('heading', { name: /buy oat milk/i })).toBeInTheDocument()
+  })
 })
