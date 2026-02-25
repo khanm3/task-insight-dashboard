@@ -203,155 +203,185 @@ describe('<App />', () => {
       expect(input).toBeInTheDocument()
       expect(input).toHaveFocus()
     })
+
+    test('pressing Enter updates the task title', async () => {
+      render(<App />)
+  
+      // Precondition: task exists
+      const taskItem = await screen.findByRole('listitem', { name: /buy milk/i })
+      const title = within(taskItem).getByRole('heading', { name: /buy milk/i })
+  
+      // Enter edit mode
+      await user.click(title)
+  
+      const input = within(taskItem).getByRole('textbox')
+      expect(input).toHaveFocus()
+  
+      // Action: change value and press Enter
+      await user.clear(input)
+      await user.type(input, "Buy oat milk{enter}")
+  
+      // Postcondition:
+      // 1. Input disappears
+      expect(within(taskItem).queryByRole('textbox')).not.toBeInTheDocument()
+  
+      // 2. Heading now shows updated title
+      expect(within(taskItem).getByRole('heading', { name: /buy oat milk/i })).toBeInTheDocument()
+    })
+  
+    test('pressing Escape cancels editing and restores original title', async () => {
+      render(<App />)
+  
+      // Precondition: task exists
+      const taskItem = await screen.findByRole('listitem', { name: /buy milk/i })
+      const title = within(taskItem).getByRole('heading', { name: /buy milk/i })
+  
+      // Enter edit mode
+      await user.click(title)
+  
+      const input = within(taskItem).getByRole('textbox')
+      expect(input).toHaveFocus()
+  
+      // Action: change value and press Escape
+      await user.clear(input)
+      await user.type(input, 'Buy oat milk')
+      await user.keyboard('{Escape}')
+  
+      // Postcondition:
+      // 1. Input dissappears
+      expect(within(taskItem).queryByRole('textbox')).not.toBeInTheDocument()
+  
+      // 2. Original title remains
+      expect(within(taskItem).getByRole('heading', { name: /buy milk/i })).toBeInTheDocument()
+  
+      // 3. Updated title should not exist
+      expect(
+        within(taskItem).queryByRole('heading', { name: /buy oat milk/i })
+      ).not.toBeInTheDocument()
+    })
+  
+    test("blurring the input saves the updated task title", async () => {
+      render(<App />)
+  
+      // Precondition: task exists
+      const taskItem = await screen.findByRole("listitem", { name: /buy milk/i })
+      const title = within(taskItem).getByRole("heading", { name: /buy milk/i })
+  
+      // Enter edit mode
+      await user.click(title)
+  
+      const input = within(taskItem).getByRole("textbox")
+      expect(input).toHaveFocus()
+  
+      // Action: change value
+      await user.clear(input)
+      await user.type(input, "Buy oat milk")
+  
+      // Blur the input (simulate clicking elsewhere)
+      await user.tab()
+  
+      // Postcondition:
+      // 1. Input disappears
+      expect(within(taskItem).queryByRole("textbox")).not.toBeInTheDocument()
+  
+      // 2. Heading now shows updated title
+      expect(
+        within(taskItem).getByRole("heading", { name: /buy oat milk/i })
+      ).toBeInTheDocument()
+    })
+  
+    test("empty task title reverts to original", async () => {
+      render(<App />)
+  
+      // Precondition: task exists
+      const taskItem = await screen.findByRole("listitem", { name: /buy milk/i })
+      const title = within(taskItem).getByRole("heading", { name: /buy milk/i })
+  
+      // Enter edit mode
+      await user.click(title)
+      const input = within(taskItem).getByRole("textbox")
+      expect(input).toHaveFocus()
+  
+      // Action: clear input and press Enter
+      await user.clear(input)
+      await user.keyboard('{Enter}')
+  
+      // Postcondition:
+      // 1. Input disappears
+      expect(within(taskItem).queryByRole("textbox")).not.toBeInTheDocument()
+  
+      // 2. Original title remains
+      expect(within(taskItem).getByRole("heading", { name: /buy milk/i })).toBeInTheDocument()
+  
+      // 3. Empty title does not exist
+      expect(
+        within(taskItem).queryByRole("heading", { name: /^$/ })
+      ).not.toBeInTheDocument()
+    })
+  
+    test('clicking another task saves edits and switches editing', async () => {
+      render(<App />)
+  
+      // Precondition: tasks exist
+      const taskAItem = await screen.findByRole('listitem', { name: /buy milk/i })
+      const taskBItem = await screen.findByRole('listitem', { name: /do laundry/i })
+  
+      const taskATitle = within(taskAItem).getByRole('heading', { name: /buy milk/i })
+      const taskBTitle = within(taskBItem).getByRole('heading', { name: /do laundry/i })
+  
+      // Action: click Task A to enter edit mode
+      await user.click(taskATitle)
+      const taskAInput = within(taskAItem).getByRole('textbox')
+      expect(taskAInput).toHaveFocus()
+  
+      // Type a change into Task A
+      await user.clear(taskAInput)
+      await user.type(taskAInput, 'Buy oat milk')
+  
+      // Action: click Task B to switch editing
+      await user.click(taskBTitle)
+  
+      // Postconditions:
+  
+      // 1. Task A saved changes
+      expect(within(taskAItem).queryByRole('textbox')).not.toBeInTheDocument()
+      expect(within(taskAItem).getByRole('heading', { name: /buy oat milk/i })).toBeInTheDocument()
+      expect(within(taskAItem).queryByRole('heading', { name: /buy milk/i })).not.toBeInTheDocument()
+  
+      // 2. Task B entered edit mode
+      const taskBInput = within(taskBItem).getByRole('textbox')
+      expect(taskBInput).toBeInTheDocument()
+      expect(taskBInput).toHaveFocus()
+    })
   })
 
-  test('pressing Enter updates the task title', async () => {
-    render(<App />)
+  describe('task title edit behavior', () => {
+    beforeEach(() => {
+      localStorage.clear()
+    })
 
-    // Precondition: task exists
-    const taskItem = await screen.findByRole('listitem', { name: /buy milk/i })
-    const title = within(taskItem).getByRole('heading', { name: /buy milk/i })
+    beforeEach(() => {
+      vi.spyOn(global, 'fetch').mockResolvedValue({
+        json: async () => [
+          { id: 1, title: 'Buy milk', completed: false },
+          { id: 2, title: 'Do laundry', completed: false }
+        ]
+      })
+    })
 
-    // Enter edit mode
-    await user.click(title)
+    test("clicking delete button removes task from the list", async () => {
+      render(<App />)
 
-    const input = within(taskItem).getByRole('textbox')
-    expect(input).toHaveFocus()
+      // Precondition: task exists
+      const taskItem = await screen.findByRole("listitem", { name: /Buy milk/i })
+      expect(taskItem).toBeInTheDocument()
 
-    // Action: change value and press Enter
-    await user.clear(input)
-    await user.type(input, "Buy oat milk{enter}")
+      // Act: click the delete button inside that task
+      const deleteButton = within(taskItem).getByRole("button", { name: /delete task buy milk/i })
+      await user.click(deleteButton)
 
-    // Postcondition:
-    // 1. Input disappears
-    expect(within(taskItem).queryByRole('textbox')).not.toBeInTheDocument()
-
-    // 2. Heading now shows updated title
-    expect(within(taskItem).getByRole('heading', { name: /buy oat milk/i })).toBeInTheDocument()
-  })
-
-  test('pressing Escape cancels editing and restores original title', async () => {
-    render(<App />)
-
-    // Precondition: task exists
-    const taskItem = await screen.findByRole('listitem', { name: /buy milk/i })
-    const title = within(taskItem).getByRole('heading', { name: /buy milk/i })
-
-    // Enter edit mode
-    await user.click(title)
-
-    const input = within(taskItem).getByRole('textbox')
-    expect(input).toHaveFocus()
-
-    // Action: change value and press Escape
-    await user.clear(input)
-    await user.type(input, 'Buy oat milk')
-    await user.keyboard('{Escape}')
-
-    // Postcondition:
-    // 1. Input dissappears
-    expect(within(taskItem).queryByRole('textbox')).not.toBeInTheDocument()
-
-    // 2. Original title remains
-    expect(within(taskItem).getByRole('heading', { name: /buy milk/i })).toBeInTheDocument()
-
-    // 3. Updated title should not exist
-    expect(
-      within(taskItem).queryByRole('heading', { name: /buy oat milk/i })
-    ).not.toBeInTheDocument()
-  })
-
-  test("blurring the input saves the updated task title", async () => {
-    render(<App />)
-
-    // Precondition: task exists
-    const taskItem = await screen.findByRole("listitem", { name: /buy milk/i })
-    const title = within(taskItem).getByRole("heading", { name: /buy milk/i })
-
-    // Enter edit mode
-    await user.click(title)
-
-    const input = within(taskItem).getByRole("textbox")
-    expect(input).toHaveFocus()
-
-    // Action: change value
-    await user.clear(input)
-    await user.type(input, "Buy oat milk")
-
-    // Blur the input (simulate clicking elsewhere)
-    await user.tab()
-
-    // Postcondition:
-    // 1. Input disappears
-    expect(within(taskItem).queryByRole("textbox")).not.toBeInTheDocument()
-
-    // 2. Heading now shows updated title
-    expect(
-      within(taskItem).getByRole("heading", { name: /buy oat milk/i })
-    ).toBeInTheDocument()
-  })
-
-  test("empty task title reverts to original", async () => {
-    render(<App />)
-
-    // Precondition: task exists
-    const taskItem = await screen.findByRole("listitem", { name: /buy milk/i })
-    const title = within(taskItem).getByRole("heading", { name: /buy milk/i })
-
-    // Enter edit mode
-    await user.click(title)
-    const input = within(taskItem).getByRole("textbox")
-    expect(input).toHaveFocus()
-
-    // Action: clear input and press Enter
-    await user.clear(input)
-    await user.keyboard('{Enter}')
-
-    // Postcondition:
-    // 1. Input disappears
-    expect(within(taskItem).queryByRole("textbox")).not.toBeInTheDocument()
-
-    // 2. Original title remains
-    expect(within(taskItem).getByRole("heading", { name: /buy milk/i })).toBeInTheDocument()
-
-    // 3. Empty title does not exist
-    expect(
-      within(taskItem).queryByRole("heading", { name: /^$/ })
-    ).not.toBeInTheDocument()
-  })
-
-  test('clicking another task saves edits and switches editing', async () => {
-    render(<App />)
-
-    // Precondition: tasks exist
-    const taskAItem = await screen.findByRole('listitem', { name: /buy milk/i })
-    const taskBItem = await screen.findByRole('listitem', { name: /do laundry/i })
-
-    const taskATitle = within(taskAItem).getByRole('heading', { name: /buy milk/i })
-    const taskBTitle = within(taskBItem).getByRole('heading', { name: /do laundry/i })
-
-    // Action: click Task A to enter edit mode
-    await user.click(taskATitle)
-    const taskAInput = within(taskAItem).getByRole('textbox')
-    expect(taskAInput).toHaveFocus()
-
-    // Type a change into Task A
-    await user.clear(taskAInput)
-    await user.type(taskAInput, 'Buy oat milk')
-
-    // Action: click Task B to switch editing
-    await user.click(taskBTitle)
-
-    // Postconditions:
-
-    // 1. Task A saved changes
-    expect(within(taskAItem).queryByRole('textbox')).not.toBeInTheDocument()
-    expect(within(taskAItem).getByRole('heading', { name: /buy oat milk/i })).toBeInTheDocument()
-    expect(within(taskAItem).queryByRole('heading', { name: /buy milk/i })).not.toBeInTheDocument()
-
-    // 2. Task B entered edit mode
-    const taskBInput = within(taskBItem).getByRole('textbox')
-    expect(taskBInput).toBeInTheDocument()
-    expect(taskBInput).toHaveFocus()
+      // Postcondition: task no longer exists
+      expect(screen.queryByRole("listitem", { name: /Buy milk/i })).not.toBeInTheDocument()
+    })
   })
 })

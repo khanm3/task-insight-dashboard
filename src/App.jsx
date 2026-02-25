@@ -71,6 +71,12 @@ function App() {
     setEditingTaskId(null)
   }
 
+  const deleteTask = (id) => {
+    setTasks(prevTasks =>
+      prevTasks.filter((task) => task.id !== id)
+    )
+  }
+
   return (
     <div className="mx-auto max-w-2xl md:max-w-3xl lg:max-w-4xl px-4 py-6">
       <div className="flex flex-col gap-6">
@@ -98,6 +104,7 @@ function App() {
               setEditingTaskId={setEditingTaskId}
               onSave={updateTaskTitle}
               onCancel={cancelEditing}
+              onDelete={deleteTask}
             />
           </div>
         )}

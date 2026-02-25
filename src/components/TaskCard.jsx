@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel }) {
+function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel, onDelete }) {
   const [draftTitle, setDraftTitle] = useState(task.title)
 
   // Derived values
@@ -43,7 +43,7 @@ function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel 
         px-4 py-4
         border rounded-lg
         transition-colors transition-shadow duration-200
-        "border-gray-200 hover:bg-gray-50 hover:shadow-md"
+        border-gray-200 hover:bg-gray-50
       `}
     >
 
@@ -98,6 +98,25 @@ function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel 
             {task.title}
           </h3>
         )}
+
+        {/* Delete Button */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onDelete(task.id) }}
+          aria-label={`Delete task ${task.title}`}
+          className="ml-2 p-1 rounded hover:bg-gray-100 hover:text-red-500 transition-colors duration-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
     </li>
   )
