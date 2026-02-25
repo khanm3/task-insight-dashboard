@@ -172,7 +172,7 @@ describe('<App />', () => {
     })
   })
 
-  describe('task title edit behavior', () => {
+  describe('task title editing', () => {
     beforeEach(() => {
       localStorage.clear()
     })
@@ -355,7 +355,7 @@ describe('<App />', () => {
     })
   })
 
-  describe('task title edit behavior', () => {
+  describe('task deleting', () => {
     beforeEach(() => {
       localStorage.clear()
     })
@@ -382,6 +382,41 @@ describe('<App />', () => {
 
       // Postcondition: task no longer exists
       expect(screen.queryByRole("listitem", { name: /Buy milk/i })).not.toBeInTheDocument()
+    })
+  })
+
+  describe('task adding', () => {
+    beforeEach(() => {
+      localStorage.clear()
+    })
+
+    beforeEach(() => {
+      vi.spyOn(global, 'fetch').mockResolvedValue({
+        json: async () => [
+          { id: 1, title: 'Buy milk', completed: false },
+          { id: 2, title: 'Do laundry', completed: false }
+        ]
+      })
+    })
+
+    test('adding a new task updates the task list and clears input', async () => {
+      const user = userEvent.setup()
+      render(<App />)
+
+      // Precondition: input exists and task does not yet exist
+      const input = screen.getByPlaceholderText(/add new task/i)
+      expect(input).toBeInTheDocument()
+      expect(screen.queryByText("Walk the dog")).not.toBeInTheDocument()
+
+      // Action: type a new task and submit (Enter)
+      await user.type(input, "Walk the dog{Enter}")
+
+      // Postcondition:
+      // 1. New task appears in the list
+      expect(screen.getByText("Walk the dog")).toBeInTheDocument()
+
+      // 2. Input is cleared
+      expect(input).toHaveValue("")
     })
   })
 })
