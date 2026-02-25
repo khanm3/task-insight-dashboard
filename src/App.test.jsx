@@ -260,4 +260,34 @@ describe('<App />', () => {
       within(taskItem).queryByRole('heading', { name: /buy oat milk/i })
     ).not.toBeInTheDocument()
   })
+
+  test("blurring the input saves the updated task title", async () => {
+    render(<App />)
+
+    // Precondition: task exists
+    const taskItem = await screen.findByRole("listitem", { name: /buy milk/i })
+    const title = within(taskItem).getByRole("heading", { name: /buy milk/i })
+
+    // Enter edit mode
+    await user.click(title)
+
+    const input = within(taskItem).getByRole("textbox")
+    expect(input).toHaveFocus()
+
+    // Action: change value
+    await user.clear(input)
+    await user.type(input, "Buy oat milk")
+
+    // Blur the input (simulate clicking elsewhere)
+    await user.tab()
+
+    // Postcondition:
+    // 1. Input disappears
+    expect(within(taskItem).queryByRole("textbox")).not.toBeInTheDocument()
+
+    // 2. Heading now shows updated title
+    expect(
+      within(taskItem).getByRole("heading", { name: /buy oat milk/i })
+    ).toBeInTheDocument()
+  })
 })

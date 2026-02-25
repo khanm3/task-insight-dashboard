@@ -17,6 +17,12 @@ function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel 
     }
   }
 
+  const handleBlur = () => {
+    if (isEditing) {
+      onSave(task.id, draftTitle)
+    }
+  }
+
   return (
     <li
       aria-labelledby={titleId}
@@ -49,6 +55,7 @@ function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel 
             value={draftTitle}
             onChange={(e) => setDraftTitle(e.target.value)}
             onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
           />
         ) : (
           <h3
