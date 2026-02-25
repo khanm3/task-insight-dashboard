@@ -320,7 +320,7 @@ describe('<App />', () => {
     ).not.toBeInTheDocument()
   })
 
-  test('clicking another task switches editing and cancels previous edits', async () => {
+  test('clicking another task saves edits and switches editing', async () => {
     render(<App />)
 
     // Precondition: tasks exist
@@ -344,10 +344,10 @@ describe('<App />', () => {
 
     // Postconditions:
 
-    // 1. Task A discarded changes
+    // 1. Task A saved changes
     expect(within(taskAItem).queryByRole('textbox')).not.toBeInTheDocument()
-    expect(within(taskAItem).getByRole('heading', { name: /buy milk/i })).toBeInTheDocument()
-    expect(within(taskAItem).queryByRole('heading', { name: /buy oat milk/i })).not.toBeInTheDocument()
+    expect(within(taskAItem).getByRole('heading', { name: /buy oat milk/i })).toBeInTheDocument()
+    expect(within(taskAItem).queryByRole('heading', { name: /buy milk/i })).not.toBeInTheDocument()
 
     // 2. Task B entered edit mode
     const taskBInput = within(taskBItem).getByRole('textbox')
