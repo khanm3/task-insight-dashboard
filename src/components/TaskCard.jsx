@@ -1,5 +1,17 @@
-function TaskCard({ task, onToggle, isEditing, onStartEditing }) {
+import { useState } from "react"
+
+function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave }) {
+  const [draftTitle, setDraftTitle] = useState(task.title)
+
+  // Derived values
   const titleId = `task-title-${task.id}`
+
+  // Event handlers
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      onSave(task.id, draftTitle)
+    }
+  }
 
   return (
     <li
@@ -30,6 +42,9 @@ function TaskCard({ task, onToggle, isEditing, onStartEditing }) {
             aria-label="Edit task title"
             className="flex-1 border-b focus:outline-none"
             autoFocus
+            value={draftTitle}
+            onChange={(e) => setDraftTitle(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         ) : (
           <h3
