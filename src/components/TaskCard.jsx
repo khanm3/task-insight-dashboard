@@ -60,23 +60,39 @@ function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel 
         {isEditing ? (
           <input
             type="text"
-            defaultValue={task.title}
             aria-label="Edit task title"
-            className="flex-1 border-b focus:outline-none"
             autoFocus
             value={draftTitle}
             onChange={(e) => setDraftTitle(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
+            className={`
+              flex-1
+              text-lg
+              font-medium
+              leading-tight
+              bg-transparent
+              border-b border-gray-300
+              focus:outline-none focus:border-blue-500 focus:bg-blue-50
+              transition-colors duration-150 ease-in-out
+              ${
+                task.completed
+                  ? "line-through text-gray-400"
+                  : "text-gray-900"
+              }
+            `}
           />
         ) : (
           <h3
             id={titleId}
-            className={`text-lg font-medium transition-colors ${
-              task.completed
-                ? "line-through text-gray-400"
-                : "text-gray-900"
-            }`}
+            className={`
+              flex-1 text-lg font-medium leading-tight transition-colors cursor-text
+              ${
+                task.completed
+                  ? "line-through text-gray-400"
+                  : "text-gray-900"
+              }`
+            }
             onClick={onStartEditing}
           >
             {task.title}
