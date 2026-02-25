@@ -319,4 +319,39 @@ describe('<App />', () => {
       within(taskItem).queryByRole("heading", { name: /^$/ })
     ).not.toBeInTheDocument()
   })
+
+  test('clicking another task switches editing and cancels previous edits', async () => {
+    render(<App />)
+
+    // Precondition: tasks exist
+    const taskAItem = await screen.findByRole('listitem', { name: /buy milk/i })
+    const taskBItem = await screen.findByRole('listitem', { name: /do laundry/i })
+
+    const taskATitle = within(taskAItem).getByRole('heading', { name: /buy milk/i })
+    const taskBTitle = within(taskBItem).getByRole('heading', { name: /do laundry/i })
+
+    // Action: click Task A to enter edit mode
+    await user.click(taskATitle)
+    const taskAInput = within(taskAItem).getByRole('textbox')
+    expect(taskAInput).toHaveFocus()
+
+    // Type a change into Task A
+    await user.clear(taskAInput)
+    await user.type(taskAInput, 'Buy oat milk')
+
+    // Action: click Task B to switch editing
+    await user.click(taskBTitle)
+
+    // Postconditions:
+
+    // 1. Task A discarded changes
+    expect(within(taskAItem).queryByRole('textbox')).not.toBeInTheDocument()
+    expect(within(taskAItem).getByRole('heading', { name: /buy milk/i })).toBeInTheDocument()
+    expect(within(taskAItem).queryByRole('heading', { name: /buy oat milk/i })).not.toBeInTheDocument()
+
+    // 2. Task B entered edit mode
+    const taskBInput = within(taskBItem).getByRole('textbox')
+    expect(taskBInput).toBeInTheDocument()
+    expect(taskBInput).toHaveFocus()
+  })
 })
