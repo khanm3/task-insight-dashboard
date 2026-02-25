@@ -67,6 +67,10 @@ function App() {
     setEditingTaskId(null)
   }
 
+  const cancelEditing = () => {
+    setEditingTaskId(null)
+  }
+
   return (
     <div className="mx-auto max-w-2xl md:max-w-3xl lg:max-w-4xl px-4 py-6">
       <div className="flex flex-col gap-6">
@@ -93,6 +97,7 @@ function App() {
               editingTaskId={editingTaskId}
               setEditingTaskId={setEditingTaskId}
               onSave={updateTaskTitle}
+              onCancel={cancelEditing}
             />
           </div>
         )}

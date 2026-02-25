@@ -229,4 +229,35 @@ describe('<App />', () => {
     // 2. Heading now shows updated title
     expect(within(taskItem).getByRole('heading', { name: /buy oat milk/i })).toBeInTheDocument()
   })
+
+  test('pressing Escape cancels editing and restores original title', async () => {
+    render(<App />)
+
+    // Precondition: task exists
+    const taskItem = await screen.findByRole('listitem', { name: /buy milk/i })
+    const title = within(taskItem).getByRole('heading', { name: /buy milk/i })
+
+    // Enter edit mode
+    await user.click(title)
+
+    const input = within(taskItem).getByRole('textbox')
+    expect(input).toHaveFocus()
+
+    // Action: change value and press Escape
+    await user.clear(input)
+    await user.type(input, 'Buy oat milk')
+    await user.keyboard('{Escape}')
+
+    // Postcondition:
+    // 1. Input dissappears
+    expect(within(taskItem).queryByRole('textbox')).not.toBeInTheDocument()
+
+    // 2. Original title remains
+    expect(within(taskItem).getByRole('heading', { name: /buy milk/i })).toBeInTheDocument()
+
+    // 3. Updated title should not exist
+    expect(
+      within(taskItem).queryByRole('heading', { name: /buy oat milk/i })
+    ).not.toBeInTheDocument()
+  })
 })

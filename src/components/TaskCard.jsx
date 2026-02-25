@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave }) {
+function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel }) {
   const [draftTitle, setDraftTitle] = useState(task.title)
 
   // Derived values
@@ -10,6 +10,10 @@ function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave }) {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       onSave(task.id, draftTitle)
+    }
+    if (e.key === "Escape") {
+      setDraftTitle(task.title)
+      onCancel()
     }
   }
 
