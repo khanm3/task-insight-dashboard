@@ -7,19 +7,31 @@ function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel 
   const titleId = `task-title-${task.id}`
 
   // Event handlers
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+  const handleDiscard = () => {
+    setDraftTitle(task.title)
+    onCancel()
+  }
+
+  const handleSave = () => {
+    if (draftTitle.trim() === "") {
+      handleDiscard()
+    } else {
       onSave(task.id, draftTitle)
     }
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSave()
+    }
     if (e.key === "Escape") {
-      setDraftTitle(task.title)
-      onCancel()
+      handleDiscard()
     }
   }
 
   const handleBlur = () => {
     if (isEditing) {
-      onSave(task.id, draftTitle)
+      handleSave()
     }
   }
 

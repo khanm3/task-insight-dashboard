@@ -290,4 +290,33 @@ describe('<App />', () => {
       within(taskItem).getByRole("heading", { name: /buy oat milk/i })
     ).toBeInTheDocument()
   })
+
+  test("empty task title reverts to original", async () => {
+    render(<App />)
+
+    // Precondition: task exists
+    const taskItem = await screen.findByRole("listitem", { name: /buy milk/i })
+    const title = within(taskItem).getByRole("heading", { name: /buy milk/i })
+
+    // Enter edit mode
+    await user.click(title)
+    const input = within(taskItem).getByRole("textbox")
+    expect(input).toHaveFocus()
+
+    // Action: clear input and press Enter
+    await user.clear(input)
+    await user.keyboard('{Enter}')
+
+    // Postcondition:
+    // 1. Input disappears
+    expect(within(taskItem).queryByRole("textbox")).not.toBeInTheDocument()
+
+    // 2. Original title remains
+    expect(within(taskItem).getByRole("heading", { name: /buy milk/i })).toBeInTheDocument()
+
+    // 3. Empty title does not exist
+    expect(
+      within(taskItem).queryByRole("heading", { name: /^$/ })
+    ).not.toBeInTheDocument()
+  })
 })
