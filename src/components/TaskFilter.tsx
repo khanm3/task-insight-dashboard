@@ -1,6 +1,12 @@
+import { Filter } from "../types";
 import FilterPill from "./FilterPill";
 
-function TaskFilter({ filter, onChange }) {
+interface TaskFilterProps {
+  filter: Filter
+  onChange: (filter: Filter) => void
+}
+
+function TaskFilter({ filter, onChange }: TaskFilterProps) {
   return (
     <div className="flex items-center gap-2">
       <FilterPill

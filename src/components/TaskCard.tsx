@@ -1,7 +1,19 @@
 import { useState } from "react"
+import { Task } from "../types"
 
-function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel, onDelete }) {
-  const [draftTitle, setDraftTitle] = useState(task.title)
+// Props interface
+interface TaskCardProps {
+  task: Task
+  onToggle: (id: string) => void
+  isEditing: boolean
+  onStartEditing: () => void
+  onSave: (id: string, newTitle: string) => void
+  onCancel: () => void
+  onDelete: (id: string) => void
+}
+
+function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel, onDelete }: TaskCardProps) {
+  const [draftTitle, setDraftTitle] = useState<string>(task.title)
 
   // Derived values
   const titleId = `task-title-${task.id}`
@@ -20,7 +32,7 @@ function TaskCard({ task, onToggle, isEditing, onStartEditing, onSave, onCancel,
     }
   }
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSave()
     }

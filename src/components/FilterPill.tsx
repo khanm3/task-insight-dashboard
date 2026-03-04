@@ -1,4 +1,10 @@
-function FilterPill({ active, label, onClick }) {
+interface FilterPillProps {
+  active: boolean
+  label: string
+  onClick: () => void
+}
+
+function FilterPill({ active, label, onClick }: FilterPillProps) {
   const baseClasses =
     "rounded-full px-3 py-1 text-sm shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none"
   const activeClasses =

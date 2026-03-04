@@ -2,24 +2,37 @@ import { useState, useEffect } from 'react'
 import TaskList from './components/TaskList'
 import TaskFilter from './components/TaskFilter'
 import AddTask from './components/AddTask'
+import { ApiTask, Filter, Task } from './types'
 
 function App() {
-  const [tasks, setTasks] = useState([])
+  const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState(() => {
+  const [filter, setFilter] = useState<Filter>(() => {
     const persistedFilter = localStorage.getItem("filter")
-    if (persistedFilter) {
+    if (
+      persistedFilter === "all" ||
+      persistedFilter === "completed" ||
+      persistedFilter === "incomplete"
+    ) {
       return persistedFilter;
     }
     return "all"
   })
-  const [editingTaskId, setEditingTaskId] = useState(null)
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchTasks() {
       const res = await fetch("https://jsonplaceholder.typicode.com/todos")
-      const data = await res.json()
-      setTasks(data)
+      const data: ApiTask[] = await res.json()
+
+      // JSONPlaceholder returns numeric ids — convert to string
+      const formattedTasks: Task[] = data.map(item => ({
+        id: String(item.id),
+        title: item.title,
+        completed: item.completed
+      }))
+
+      setTasks(formattedTasks)
       setLoading(false)
     }
 
@@ -28,7 +41,11 @@ function App() {
 
   useEffect(() => {
     const persistedFilter = localStorage.getItem("filter")
-    if (persistedFilter) {
+    if (
+      persistedFilter === "all" ||
+      persistedFilter === "completed" ||
+      persistedFilter === "incomplete"
+    ) {
       setFilter(persistedFilter)
     }
   }, [])
@@ -47,7 +64,7 @@ function App() {
   const numCompleted = tasks.filter(task => task.completed).length
 
   // Event handlers
-  const toggleTask = (taskId) => {
+  const toggleTask = (taskId: string) => {
     setTasks(prevTasks =>
       prevTasks.map(task =>
         task.id === taskId
@@ -57,7 +74,7 @@ function App() {
     )
   }
 
-  const updateTaskTitle = (id, newTitle) => {
+  const updateTaskTitle = (id: string, newTitle: string) => {
     setTasks(prev =>
       prev.map(task =>
         task.id === id
@@ -72,13 +89,13 @@ function App() {
     setEditingTaskId(null)
   }
 
-  const deleteTask = (id) => {
+  const deleteTask = (id: string) => {
     setTasks(prevTasks =>
       prevTasks.filter((task) => task.id !== id)
     )
   }
 
-  const addTask = (title) => {
+  const addTask = (title: string) => {
     const newTask = {
       id: crypto.randomUUID(),
       title: title,

@@ -1,10 +1,14 @@
-import { useState } from "react"
+import React, { useState } from "react"
 
-function AddTask({ onAdd }) {
+interface AddTaskProps {
+  onAdd: (title: string) => void
+}
+
+function AddTask({ onAdd }: AddTaskProps) {
   const [ newTaskTitle, setNewTaskTitle ] = useState("")
 
   // Event handlers
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const trimmed = newTaskTitle.trim()
       if (!trimmed) return
