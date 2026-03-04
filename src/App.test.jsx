@@ -404,7 +404,7 @@ describe('<App />', () => {
       render(<App />)
 
       // Precondition: input exists and task does not yet exist
-      const input = screen.getByPlaceholderText(/add new task/i)
+      const input = await screen.findByPlaceholderText(/add new task/i)
       expect(input).toBeInTheDocument()
       expect(screen.queryByText("Walk the dog")).not.toBeInTheDocument()
 

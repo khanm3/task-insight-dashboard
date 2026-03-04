@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import TaskList from './components/TaskList'
 import TaskFilter from './components/TaskFilter'
+import AddTask from './components/AddTask'
 
 function App() {
   const [tasks, setTasks] = useState([])
@@ -77,6 +78,15 @@ function App() {
     )
   }
 
+  const addTask = (title) => {
+    const newTask = {
+      id: crypto.randomUUID(),
+      title: title,
+      completed: false,
+    }
+    setTasks(prevTasks => [ newTask, ...prevTasks ])
+  }
+
   return (
     <div className="mx-auto max-w-2xl md:max-w-3xl lg:max-w-4xl px-4 py-6">
       <div className="flex flex-col gap-6">
@@ -97,6 +107,9 @@ function App() {
               filter={filter}
               onChange={setFilter}
             />
+
+            <AddTask onAdd={addTask} />
+
             <TaskList
               tasks={filteredTasks}
               onToggle={toggleTask}
