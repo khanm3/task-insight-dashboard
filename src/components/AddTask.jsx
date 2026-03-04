@@ -6,6 +6,9 @@ function AddTask({ onAdd }) {
   // Event handlers
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
+      const trimmed = newTaskTitle.trim()
+      if (!trimmed) return
+
       onAdd(newTaskTitle)
       setNewTaskTitle("")
     }

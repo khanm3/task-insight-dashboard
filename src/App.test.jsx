@@ -418,5 +418,21 @@ describe('<App />', () => {
       // 2. Input is cleared
       expect(input).toHaveValue("")
     })
+
+    test("does not add a task when input is empty", async () => {
+      render(<App />)
+
+      const input = await screen.findByPlaceholderText(/add new task/i)
+
+      // Capture initial task count
+      const initialTasks = screen.getAllByRole("listitem").length
+
+      // Press Enter with empty input
+      await userEvent.type(input, "   {enter}")
+
+      // Task count should remain the same
+      const tasksAfter = screen.getAllByRole("listitem").length
+      expect(tasksAfter).toBe(initialTasks)
+    })
   })
 })
